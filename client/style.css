@@ -91,3 +91,12 @@ button:hover {
 .card:nth-child(3) {
     border-top: 6px solid #28a745; /* Low */
 }
+
+canvas {
+    display: block;
+    margin: 30px auto;
+    max-width: 400px;
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+}
