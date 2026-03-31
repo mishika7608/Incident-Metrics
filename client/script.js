@@ -1,34 +1,4 @@
-
-// async function loadReport() {
-//     try {
-//         const res = await fetch("http://localhost:3000/incidents");
-
-//         // Read raw response first
-//         const text = await res.text();
-//         console.log("RAW RESPONSE:", text);
-
-//         let data;
-
-//         // Try converting to JSON safely
-//         try {
-//             data = JSON.parse(text);
-//         } catch {
-//             alert("Server did not return valid JSON");
-//             return;
-//         }
-
-//         if (data.error) {
-//             alert(data.error);
-//             return;
-//         }
-
-//         displayReport(data);
-
-//     } catch (error) {
-//         console.error("FRONTEND ERROR:", error);
-//         alert("Error loading report");
-//     }
-// }
+let chart; // to prevent duplicate charts
 
 async function loadReport() {
     try {
@@ -64,6 +34,8 @@ async function loadReport() {
         alert("Error loading report");
     }
 }
+
+
 function displayReport(data) {
     const reportDiv = document.getElementById("report");
 
@@ -81,26 +53,38 @@ function displayReport(data) {
             <p>${data.Low}</p>
         </div>
     `;
+
+    // 🔥 PIE CHART
+    const ctx = document.getElementById("incidentChart").getContext("2d");
+
+    // destroy old chart if exists
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: ["High", "Medium", "Low"],
+            datasets: [{
+                data: [data.High, data.Medium, data.Low],
+                backgroundColor: [
+                    "#ff4d4d",
+                    "#ffc107",
+                    "#28a745"
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
 }
-
-
-// async function loadReport() {
-//     try {
-//         const res = await fetch("http://localhost:3000/incidents");
-//         const data = await res.json();
-
-//         if (data.error) {
-//             alert(data.error);
-//             return;
-//         }
-
-//         displayReport(data);
-
-//     } catch (error) {
-//         console.error(error);
-//         alert("Error loading report");
-//     }
-// }
 
 // function displayReport(data) {
 //     const reportDiv = document.getElementById("report");
@@ -120,3 +104,4 @@ function displayReport(data) {
 //         </div>
 //     `;
 // }
+
