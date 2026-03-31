@@ -15,3 +15,22 @@ async function loadReport() {
         alert("Error loading report");
     }
 }
+
+function displayReport(data) {
+    const reportDiv = document.getElementById("report");
+
+    reportDiv.innerHTML = `
+        <div class="card">
+            <h3>🔴 High</h3>
+            <p>${data.High}</p>
+        </div>
+        <div class="card">
+            <h3>🟡 Medium</h3>
+            <p>${data.Medium}</p>
+        </div>
+        <div class="card">
+            <h3>🟢 Low</h3>
+            <p>${data.Low}</p>
+        </div>
+    `;
+}
