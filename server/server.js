@@ -30,7 +30,7 @@ app.get("/incidents", async (req, res) => {
         const result = await parser.parseStringPromise(xmlData);
 
         // 🔹 Extract incidents (adjust path based on your XML)
-        const incidents = result?.incidents?.incident || [];
+        const incidents = result?.response?.result || [];
 
         // 🔹 Count by criticality
         const counts = {
