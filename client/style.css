@@ -81,17 +81,24 @@ button:hover {
 
 /* Color Coding */
 .card:nth-child(1) {
-    border-top: 6px solid #ff4d4d; /* High */
+    border-top: 6px solid #8B0000; /* Critical */
 }
 
 .card:nth-child(2) {
-    border-top: 6px solid #ffc107; /* Medium */
+    border-top: 6px solid #ff4d4d; /* High */
 }
 
 .card:nth-child(3) {
+    border-top: 6px solid #ff9800; /* Moderate */
+}
+
+.card:nth-child(4) {
     border-top: 6px solid #28a745; /* Low */
 }
 
+.card:nth-child(5) {
+    border-top: 6px solid #007bff; /* Planning */
+}
 canvas {
     display: block;
     margin: 30px auto;
