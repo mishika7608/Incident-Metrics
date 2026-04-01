@@ -13,8 +13,14 @@ app.get("/", (req, res) => {
 });
 
 // ✅ Incidents route (REAL API)
-app.get("/incidents", async (req, res) => {
+app.get("/report", async (req, res) => {
     try {
+        const field = req.query.field; // 👈 dynamic field
+
+        if (!field) {
+            return res.status(400).json({ error: "Field is required" });
+        }
+
         const response = await axios.get(process.env.API_URL , {
             auth: {
                 username: process.env.API_USERNAME,
@@ -23,28 +29,29 @@ app.get("/incidents", async (req, res) => {
         });
 
         const data = response.data;
-
         const incidents = data.result || [];
 
         const counts = {};
 
         incidents.forEach(inc => {
-            const priority = inc.priority || "Unknown";
+            let value = inc[field];
 
-            if (!counts[priority]) {
-                counts[priority] = 0;
+            if (!value) value = "Unknown";
+
+            if (!counts[value]) {
+                counts[value] = 0;
             }
 
-            counts[priority]++;
+            counts[value]++;
         });
 
         res.json(counts);
 
     } catch (error) {
-        console.error("REAL ERROR:", error.response?.data || error.message);
+        console.error(error.message);
 
         res.status(500).json({
-            error: "Failed to fetch incidents"
+            error: "Failed to fetch report"
         });
     }
 });
