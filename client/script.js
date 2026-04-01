@@ -1,26 +1,18 @@
-let chart; // to prevent duplicate charts
+let chart;
 
 async function loadReport() {
     try {
-        console.log("Button clicked ✅");
-
         const res = await fetch("http://localhost:3000/incidents");
-        console.log("Response object:", res);
-
         const text = await res.text();
-        console.log("RAW RESPONSE:", text);
 
         let data;
 
         try {
             data = JSON.parse(text);
         } catch (e) {
-            console.error("JSON parse failed:", e);
-            alert("Not valid JSON from server");
+            alert("Invalid JSON from server");
             return;
         }
-
-        console.log("Parsed data:", data);
 
         if (data.error) {
             alert(data.error);
@@ -30,34 +22,39 @@ async function loadReport() {
         displayReport(data);
 
     } catch (error) {
-        console.error("FRONTEND ERROR:", error);
+        console.error(error);
         alert("Error loading report");
     }
 }
-
 
 function displayReport(data) {
     const reportDiv = document.getElementById("report");
 
     reportDiv.innerHTML = `
         <div class="card">
+            <h3>🔥 Critical</h3>
+            <p>${data.Critical}</p>
+        </div>
+        <div class="card">
             <h3>🔴 High</h3>
             <p>${data.High}</p>
         </div>
         <div class="card">
-            <h3>🟡 Medium</h3>
-            <p>${data.Medium}</p>
+            <h3>🟠 Moderate</h3>
+            <p>${data.Moderate}</p>
         </div>
         <div class="card">
             <h3>🟢 Low</h3>
             <p>${data.Low}</p>
         </div>
+        <div class="card">
+            <h3>🔵 Planning</h3>
+            <p>${data.Planning}</p>
+        </div>
     `;
 
-    // 🔥 PIE CHART
     const ctx = document.getElementById("incidentChart").getContext("2d");
 
-    // destroy old chart if exists
     if (chart) {
         chart.destroy();
     }
@@ -65,13 +62,21 @@ function displayReport(data) {
     chart = new Chart(ctx, {
         type: "pie",
         data: {
-            labels: ["High", "Medium", "Low"],
+            labels: ["Critical", "High", "Moderate", "Low", "Planning"],
             datasets: [{
-                data: [data.High, data.Medium, data.Low],
+                data: [
+                    data.Critical,
+                    data.High,
+                    data.Moderate,
+                    data.Low,
+                    data.Planning
+                ],
                 backgroundColor: [
-                    "#ff4d4d",
-                    "#ffc107",
-                    "#28a745"
+                    "#8B0000",  // Critical (dark red)
+                    "#ff4d4d",  // High
+                    "#ff9800",  // Moderate
+                    "#28a745",  // Low
+                    "#007bff"   // Planning
                 ]
             }]
         },
@@ -85,7 +90,6 @@ function displayReport(data) {
         }
     });
 }
-
 // function displayReport(data) {
 //     const reportDiv = document.getElementById("report");
 
