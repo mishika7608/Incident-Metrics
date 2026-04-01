@@ -2,7 +2,9 @@ let chart;
 
 async function loadReport() {
     try {
-        const res = await fetch("http://localhost:3000/incidents");
+        const field = document.getElementById("fieldSelect").value;
+
+        const res = await fetch(`http://localhost:3000/report?field=${field}`);
         const text = await res.text();
 
         let data;
@@ -10,7 +12,7 @@ async function loadReport() {
         try {
             data = JSON.parse(text);
         } catch (e) {
-            alert("Invalid JSON from server");
+            alert("Invalid JSON");
             return;
         }
 
@@ -19,7 +21,7 @@ async function loadReport() {
             return;
         }
 
-        displayReport(data);
+        displayReport(data, field);
 
     } catch (error) {
         console.error(error);
@@ -27,7 +29,7 @@ async function loadReport() {
     }
 }
 
-function displayReport(data) {
+function displayReport(data, field) {
     const reportDiv = document.getElementById("report");
 
     reportDiv.innerHTML = "";
@@ -48,22 +50,20 @@ function displayReport(data) {
 
     let index = 0;
 
-    for (let priority in data) {
-        const value = data[priority];
+    for (let key in data) {
+        const value = data[key];
 
-        // 👉 Create Card
         const card = document.createElement("div");
         card.className = "card";
 
         card.innerHTML = `
-            <h3>Priority ${priority}</h3>
+            <h3>${key}</h3>
             <p>${value}</p>
         `;
 
         reportDiv.appendChild(card);
 
-        // 👉 Prepare chart data
-        labels.push(`P${priority}`);
+        labels.push(key);
         values.push(value);
         colors.push(colorPalette[index % colorPalette.length]);
 
@@ -72,9 +72,7 @@ function displayReport(data) {
 
     const ctx = document.getElementById("incidentChart").getContext("2d");
 
-    if (chart) {
-        chart.destroy();
-    }
+    if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
         type: "pie",
@@ -86,7 +84,6 @@ function displayReport(data) {
             }]
         },
         options: {
-            responsive: true,
             plugins: {
                 legend: {
                     position: "bottom"
@@ -95,6 +92,8 @@ function displayReport(data) {
         }
     });
 }
+
+
 // function displayReport(data) {
 //     const reportDiv = document.getElementById("report");
 
