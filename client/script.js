@@ -30,28 +30,45 @@ async function loadReport() {
 function displayReport(data) {
     const reportDiv = document.getElementById("report");
 
-    reportDiv.innerHTML = `
-        <div class="card">
-            <h3>🔥 Critical</h3>
-            <p>${data.Critical}</p>
-        </div>
-        <div class="card">
-            <h3>🔴 High</h3>
-            <p>${data.High}</p>
-        </div>
-        <div class="card">
-            <h3>🟠 Moderate</h3>
-            <p>${data.Moderate}</p>
-        </div>
-        <div class="card">
-            <h3>🟢 Low</h3>
-            <p>${data.Low}</p>
-        </div>
-        <div class="card">
-            <h3>🔵 Planning</h3>
-            <p>${data.Planning}</p>
-        </div>
-    `;
+    reportDiv.innerHTML = "";
+
+    const labels = [];
+    const values = [];
+    const colors = [];
+
+    const colorPalette = [
+        "#ff4d4d",
+        "#ffc107",
+        "#28a745",
+        "#007bff",
+        "#9c27b0",
+        "#ff9800",
+        "#00bcd4"
+    ];
+
+    let index = 0;
+
+    for (let priority in data) {
+        const value = data[priority];
+
+        // 👉 Create Card
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <h3>Priority ${priority}</h3>
+            <p>${value}</p>
+        `;
+
+        reportDiv.appendChild(card);
+
+        // 👉 Prepare chart data
+        labels.push(`P${priority}`);
+        values.push(value);
+        colors.push(colorPalette[index % colorPalette.length]);
+
+        index++;
+    }
 
     const ctx = document.getElementById("incidentChart").getContext("2d");
 
@@ -62,22 +79,10 @@ function displayReport(data) {
     chart = new Chart(ctx, {
         type: "pie",
         data: {
-            labels: ["Critical", "High", "Moderate", "Low", "Planning"],
+            labels: labels,
             datasets: [{
-                data: [
-                    data.Critical,
-                    data.High,
-                    data.Moderate,
-                    data.Low,
-                    data.Planning
-                ],
-                backgroundColor: [
-                    "#8B0000",  // Critical (dark red)
-                    "#ff4d4d",  // High
-                    "#ff9800",  // Moderate
-                    "#28a745",  // Low
-                    "#007bff"   // Planning
-                ]
+                data: values,
+                backgroundColor: colors
             }]
         },
         options: {
