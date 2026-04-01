@@ -26,22 +26,16 @@ app.get("/incidents", async (req, res) => {
 
         const incidents = data.result || [];
 
-        const counts = {
-            Critical: 0,
-            High: 0,
-            Moderate: 0,
-            Low: 0,
-            Planning: 0
-        };
+        const counts = {};
 
         incidents.forEach(inc => {
-            const priority = inc.priority;
+            const priority = inc.priority || "Unknown";
 
-            if (priority === "1") counts.Critical++;
-            else if (priority === "2") counts.High++;
-            else if (priority === "3") counts.Moderate++;
-            else if (priority === "4") counts.Low++;
-            else if (priority === "5") counts.Planning++;
+            if (!counts[priority]) {
+                counts[priority] = 0;
+            }
+
+            counts[priority]++;
         });
 
         res.json(counts);
